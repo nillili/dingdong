@@ -7,7 +7,7 @@ SimpleTimer timer;
 
 
 // You should get Auth Token in the Blynk App.
-// 개발자
+// 개발자 배현한
 char auth[] = "YJIRLSZpqVTjMKhw0e6jHiS0m_L_IPyF";
 
 // Your WiFi credentials.
