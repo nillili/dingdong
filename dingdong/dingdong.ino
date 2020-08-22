@@ -1,24 +1,65 @@
-/*
-  ESP8266 Blink by Simon Peter
-  Blink the blue LED on the ESP-01 module
-  This example code is in the public domain
+#define BLYNK_PRINT Serial
 
-  The blue LED on the ESP-01 module is connected to GPIO1
-  (which is also the TXD pin; so we cannot use Serial.print() at the same time)
 
-  Note that this sketch uses LED_BUILTIN to find the pin with the internal LED
-*/
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+SimpleTimer timer;
 
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+
+// You should get Auth Token in the Blynk App.
+// Go to the Project Settings (nut icon).
+char auth[] = "YJIRLSZpqVTjMKhw0e6jHiS0m_L_IPyF";
+
+// Your WiFi credentials.
+// Set password to "" for open networks.
+char ssid[] = "jjangsvc";
+char pass[] = "123456789a";
+
+int howmany = 500;
+
+BLYNK_WRITE(V1) //Button Widget is writing to pin V1
+{
+  howmany = param.asInt(); 
+//  howmany = param.asLong(); 
+  Serial.print("receive:");
+  Serial.println(howmany);
 }
 
-// the loop function runs over and over again forever
-void loop() {
+
+void setup()
+{
+  // Debug console
+  Serial.begin(9600);
+  pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+  
+  Blynk.begin(auth, ssid, pass);
+  timer.setInterval(2000L, sendSensor);
+}
+
+BLYNK_CONNECTED() 
+{
+  // Request Blynk server to re-send latest values for all pins
+  Blynk.syncAll();
+}
+
+
+void loop()
+{
+  Blynk.run();
+}
+
+
+void sendSensor()
+{
+    // 내용
+Serial.println("------------------>1");  
   digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on (Note that LOW is the voltage level
   // but actually the LED is on; this is because
   // it is active low on the ESP-01)
-  delay(500);                      // Wait for a second
+Serial.println("------------------>2");  
+  delay(howmany);                      // Wait for a second
+Serial.println("------------------>3");  
   digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-  delay(1000);                      // Wait for two seconds (to demonstrate the active low LED)
+Serial.println("------------------>4");  
+  delay(howmany);    
 }
