@@ -45,7 +45,11 @@ BLYNK_CONNECTED()
 
 void loop()
 {
-  Blynk.run();
+  if (Blynk.connected())
+  {
+    Blynk.run();
+    timer.run();
+  }
 }
 
 
