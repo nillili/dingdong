@@ -31,7 +31,7 @@ int delay_time = -1;     // 지연시간(분)
 int how_long = 0;
 long duration;
 int  distance;
-
+int  cnt_detected = 0;
 
 
 WidgetTerminal terminal(V3);
@@ -90,7 +90,7 @@ void setup()
 
   
   Blynk.begin(auth, ssid, pass);
-  timer.setInterval(500L, sendSensor);
+  timer.setInterval(100L, sendSensor);
 
 
   rtc.begin();            // 위젯 시간
@@ -145,7 +145,7 @@ void sendSensor()
     int val = LOW;
     
     Serial.println(val);
-    if(distance < how_long){
+    if(distance < how_long && cnt_detected > 2){
       Serial.println("감지");    
       is_touch = 1;
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
@@ -168,7 +168,13 @@ void sendSensor()
       terminal.flush();      
       snapshotTime(5000);  // 5초 얼음
       
+    }else if(distance < how_long){
+      cnt_detected++;
     }else{
+    
+      // 초기화
+      cnt_detected = 0;
+      
       if(is_touch == 1)
       {
         is_touch = 0;
