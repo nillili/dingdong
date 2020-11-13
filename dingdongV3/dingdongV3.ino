@@ -131,16 +131,26 @@ BLYNK_CONNECTED()
   Blynk.syncAll();
 }
 
+int cnt_error = 0;
 
 void loop()
 {
   if (Blynk.connected())
   {
+    cnt_error= 0;
     Blynk.run();
     timer.run();
   }else
   {
     Serial.print("Blynk Server not connected!!!");    
+    cnt_error++;
+    if(cnt_error > 30)
+    {
+      cnt_error= 0;
+      delay(1000);
+      ESP.reset();
+      delay(1000);      
+    }
   }
 }
 
