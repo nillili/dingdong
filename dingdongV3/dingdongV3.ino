@@ -34,19 +34,36 @@ String currentTime = "";
 unsigned long previousMillis  = 0;
 unsigned long currentMillis   = 0;
 int interval=1000;
-int delay_time = -1;     // 지연시간(분)
+//int delay_time = -1;     // 지연시간(분)
 int how_long = 0;
 long duration;
 int  distance;
 int  cnt_detected = 0;
 int  wait_time = 0;
-int  sensitive = 1;     // 민감도
+int  sensitive = 1;     // 민감도(카운트)
+int  delay_time = 0;
 
 WidgetTerminal terminal(V3);
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
 
+/**
+ * 민감도(속도)
+ * 멈춤시간(delay)를 조정해서 초당 반복회수를 결정
+ */
+BLYNK_WRITE(V8) //Button Widget is writing to pin V1
+{
+  delay_time = param.asInt(); 
+
+  Serial.print("receive delay:");
+  Serial.println(delay_time);
+}
+
+/**
+ * 민감도(카운트)
+ * 몇번만에 검출할것인지 결정
+ */
 BLYNK_WRITE(V7) //Button Widget is writing to pin V1
 {
   sensitive = param.asInt(); 
@@ -117,7 +134,7 @@ void setup()
 
   
   Blynk.begin(auth, ssid, pass);
-  timer.setInterval(180L, sendSensor);
+  timer.setInterval(20L, sendSensor);
 
 
   rtc.begin();            // 위젯 시간
@@ -157,6 +174,7 @@ void loop()
 
 void sendSensor()
 {
+  delay(delay_time);
   // 지연 시간동안 들어 가지 못한다
   if((unsigned long)(millis() - previousMillis) >= interval)
   {
