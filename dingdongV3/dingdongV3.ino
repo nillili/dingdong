@@ -12,6 +12,8 @@ WidgetRTC rtc;
 extern const char auth[];
 extern const char ssid[];
 extern const char pass[];
+extern const char auth_listen[];
+
 
 //const int trigPin = 13;
 //const int echoPin = 12;
@@ -59,6 +61,7 @@ BLYNK_WRITE(V8) //Button Widget is writing to pin V1
   Serial.print("receive delay:");
   Serial.println(delay_time);
 }
+
 
 /**
  * 민감도(카운트)
@@ -142,11 +145,16 @@ void setup()
   Serial.begin(115200);
 }
 
+WidgetBridge bridge(V0);
+
 BLYNK_CONNECTED() 
 {
-  // Request Blynk server to re-send latest values for all pins
+  bridge.setAuthToken(auth_listen);
   Blynk.syncAll();
 }
+
+
+
 
 int cnt_error = 0;
 
@@ -219,6 +227,7 @@ void sendSensor()
         if(scase == 1)
         {
           Blynk.notify("alert - 딩동");
+          bridge.virtualWrite(V30,1);
         }else if(scase == 2)
         {
           Blynk.email("ds1lph@gmail.com",
